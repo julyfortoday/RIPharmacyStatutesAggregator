@@ -1,0 +1,53 @@
+﻿html {
+    font-family: Calibri,Candara,Segoe,Segoe UI,Optima,Arial,sans-serif;
+    background-color: #e3f1ff;
+    Color: #424242;
+}
+#title{
+    font-size: 300%;
+    Color: #92b8d5;
+    padding-left:70px;
+    margin-top: 10px;
+    margin-bottom: 10px;
+}
+#status{
+    font-size: 100%;
+    padding-left:70px;
+}
+#content{
+    background-color: white;
+    margin-left: 10px;
+    margin-right: 10px;
+}
+h1 {
+    text-decoration: underline;
+    Color: #d09837;
+    background-color: #496d89;
+    padding-left:30px;
+    padding-top:10px;
+    padding-bottom:10px;
+    margin-top: 20px;
+    margin-bottom: 0px;
+}
+h2{
+    Color: #424242;
+    background-color: #92b8d5;
+    padding-left:30px;
+    padding-top:15px;
+    padding-bottom:15px;
+    margin: 0px;
+}
+h3 {
+    margin-left: 20px;
+    text-decoration: underline;
+}
+h4 {
+    margin-left: 30px;
+}
+p {
+	margin-left: 30px;
+	margin-right: 30px;
+}
+ul {
+	margin-left: 30px;
+}

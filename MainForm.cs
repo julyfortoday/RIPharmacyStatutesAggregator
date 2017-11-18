@@ -17,6 +17,7 @@ namespace RIPharmStatutesAggregator
         List<string> pageUrls;
         List<Core.Page> pages;
         PageFetcher fetcher;
+        StyleSheetProvider styleSheetProvider;
 
         public MainForm()
         {
@@ -25,6 +26,9 @@ namespace RIPharmStatutesAggregator
 
         private void MainForm_Load(object sender, EventArgs e)
         {
+            var styleSheet = File.ReadAllText("style.css") ?? "";
+            styleSheetProvider = new StyleSheetProvider(styleSheet);
+
             pageUrls = new List<string>();
             pageUrls.Add("http://webserver.rilin.state.ri.us/Statutes/TITLE5/5-19.1/INDEX.HTM");
             pageUrls.Add("http://webserver.rilin.state.ri.us/Statutes/TITLE5/5-19.2/INDEX.HTM");
@@ -45,7 +49,7 @@ namespace RIPharmStatutesAggregator
         {
             if (pages == null)
                 return;
-            var aggregator = new PageAggregator();
+            var aggregator = new PageAggregator(styleSheetProvider);
             var aggregatedPage = aggregator.Aggregate(pages);
 
             File.WriteAllText("RI_Pharm_Statutes.html",aggregatedPage);

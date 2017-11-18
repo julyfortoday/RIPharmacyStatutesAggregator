@@ -12,62 +12,12 @@ namespace RIPharmStatutesAggregator.Services
 {
     public class PageAggregator
     {
-        private string styleSheet =
-@"<style>
-   html {
-        font-family: Calibri,Candara,Segoe,Segoe UI,Optima,Arial,sans-serif;
-        background-color: #e3f1ff;
-        Color: #424242;
-    }
-   #title{
-        font-size: 300%;
-        Color: #92b8d5;
-        padding-left:70px;
-        margin-top: 20px;
-        margin-bottom: 20px;
-    }
-   #status{
-        font-size: 100%;
-        padding-left:70px;
-    }
-   #content{
-        background-color: white;
-        margin-left: 50px;
-        margin-right: 50px;
-    }
-   h1 {
-        text-decoration: underline;
-        Color: #d09837;
-        background-color: #496d89;
-        padding-left:40px;
-        padding-top:20px;
-        padding-bottom:30px;
-        margin-top: 30px;
-        margin-bottom: 0px;
-    }
-    h2{
-        Color: #424242;
-        background-color: #92b8d5;
-        padding-left:50px;
-        padding-top:15px;
-        padding-bottom:15px;
-        margin: 0px;
-}
-   h3 {
-        margin-left: 30px;
-        text-decoration: underline;
-    }
-   h4 {
-        margin-left: 70px;
-    }
-    p {
-		margin-left: 70px;
-		margin-right: 70px;
-	}
-    ul {
-		margin-left: 70px;
-	}
-</style>";
+        private StyleSheetProvider styleSheetProvider;
+
+        public PageAggregator(StyleSheetProvider styleSheetProvider)
+        {
+            this.styleSheetProvider = styleSheetProvider;
+        }
 
         internal string Aggregate(List<Page> pages)
         {
@@ -89,7 +39,9 @@ namespace RIPharmStatutesAggregator.Services
             var html = new StringBuilder();
             html.AppendLine("<html>");
             html.AppendLine("<head>");
-            html.AppendLine(styleSheet);
+            html.AppendLine("<style>");
+            html.AppendLine(styleSheetProvider.GetStyleSheet());
+            html.AppendLine("</style>");
             html.AppendLine("</head>");
             html.AppendLine("<body>");
             html.AppendLine("<div id=\"title\">");
