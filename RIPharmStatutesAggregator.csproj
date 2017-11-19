@@ -53,6 +53,8 @@
       <DependentUpon>ChangeAddress.cs</DependentUpon>
     </Compile>
     <Compile Include="Core\Page.cs" />
+    <Compile Include="Core\PageElements.cs" />
+    <Compile Include="Core\Tag.cs" />
     <Compile Include="Services\PageFetcher.cs" />
     <Compile Include="Services\PageAggregator.cs" />
     <Compile Include="MainForm.cs">
@@ -63,6 +65,7 @@
     </Compile>
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Services\PageElementExtractor.cs" />
     <Compile Include="Services\StyleSheetProvider.cs" />
     <EmbeddedResource Include="ChangeAddress.resx">
       <DependentUpon>ChangeAddress.cs</DependentUpon>

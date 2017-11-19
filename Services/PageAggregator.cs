@@ -3,10 +3,8 @@ using System;
 using System.IO;
 using System.Collections.Generic;
 using System.Linq;
-using System.Net;
 using System.Text;
-using System.Text.RegularExpressions;
-using System.Windows.Forms;
+using System.Xml;
 
 namespace RIPharmStatutesAggregator.Services
 {
@@ -36,6 +34,7 @@ namespace RIPharmStatutesAggregator.Services
 
         private string AddTopLevelHTML(string body)
         {
+            var pageTitle = "Rhode Island Pharmacy Statutes";
             var html = new StringBuilder();
             html.AppendLine("<html>");
             html.AppendLine("<head>");
@@ -45,7 +44,7 @@ namespace RIPharmStatutesAggregator.Services
             html.AppendLine("</head>");
             html.AppendLine("<body>");
             html.AppendLine("<div id=\"title\">");
-            html.AppendLine("Rhode Island Pharmacy Statutes");
+            html.AppendLine(pageTitle);
             html.AppendLine("</div>");
             html.AppendLine("<div id=\"status\">");
             html.AppendLine("Last Updated: " + DateTime.Now);
@@ -85,6 +84,9 @@ namespace RIPharmStatutesAggregator.Services
 
         private string AdjustPage(string html)
         {
+            var elements = PageElementExtractor.Extract(html);
+
+
             var header = FormatHeader(GetHeader(html));
             var body = "";
             var footer = "";
