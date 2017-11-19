@@ -52,7 +52,12 @@ namespace RIPharmStatutesAggregator
             var aggregator = new PageAggregator(styleSheetProvider);
             var aggregatedPage = aggregator.Aggregate(pages);
 
-            File.WriteAllText("RI_Pharm_Statutes.html",aggregatedPage);
+            saveFileDialog.FileName = "RI_Pharmacy_Statutes_" + DateTime.Now.ToString("MM_dd_yyyy") +".html";
+            saveFileDialog.Title = "Save File";
+            if (saveFileDialog.ShowDialog() == DialogResult.OK)
+            {
+                File.WriteAllText(saveFileDialog.FileName, aggregatedPage);
+            }
         }
 
         private void checkBox1_CheckedChanged(object sender, EventArgs e)

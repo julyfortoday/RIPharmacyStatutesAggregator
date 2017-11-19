@@ -32,6 +32,7 @@
             this.button1 = new System.Windows.Forms.Button();
             this.saveButton = new System.Windows.Forms.Button();
             this.checkBox1 = new System.Windows.Forms.CheckBox();
+            this.saveFileDialog = new System.Windows.Forms.SaveFileDialog();
             this.SuspendLayout();
             // 
             // listBox1
@@ -101,6 +102,7 @@
         private System.Windows.Forms.Button button1;
         private System.Windows.Forms.Button saveButton;
         private System.Windows.Forms.CheckBox checkBox1;
+        private System.Windows.Forms.SaveFileDialog saveFileDialog;
     }
 }
 
