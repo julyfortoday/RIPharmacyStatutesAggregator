@@ -22,5 +22,46 @@ namespace RIPharmStatutesAggregator.Properties {
                 return defaultInstance;
             }
         }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute(@"<?xml version=""1.0"" encoding=""utf-16""?>
+<ArrayOfString xmlns:xsi=""http://www.w3.org/2001/XMLSchema-instance"" xmlns:xsd=""http://www.w3.org/2001/XMLSchema"">
+  <string>http://webserver.rilin.state.ri.us/Statutes/TITLE5/5-19.1/INDEX.HTM</string>
+  <string>http://webserver.rilin.state.ri.us/Statutes/TITLE5/5-19.2/INDEX.HTM</string>
+  <string>http://webserver.rilin.state.ri.us/Statutes/TITLE21/21-28/INDEX.HTM</string>
+  <string>http://webserver.rilin.state.ri.us/Statutes/TITLE21/21-31/INDEX.HTM</string>
+</ArrayOfString>")]
+        public global::System.Collections.Specialized.StringCollection Addresses {
+            get {
+                return ((global::System.Collections.Specialized.StringCollection)(this["Addresses"]));
+            }
+            set {
+                this["Addresses"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("")]
+        public string SaveLocation {
+            get {
+                return ((string)(this["SaveLocation"]));
+            }
+            set {
+                this["SaveLocation"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        public global::System.DateTime LastDownloaded {
+            get {
+                return ((global::System.DateTime)(this["LastDownloaded"]));
+            }
+            set {
+                this["LastDownloaded"] = value;
+            }
+        }
     }
 }

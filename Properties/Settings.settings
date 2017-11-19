@@ -1,7 +1,21 @@
 ﻿<?xml version='1.0' encoding='utf-8'?>
-<SettingsFile xmlns="http://schemas.microsoft.com/VisualStudio/2004/01/settings" CurrentProfile="(Default)">
-  <Profiles>
-    <Profile Name="(Default)" />
-  </Profiles>
-  <Settings />
+<SettingsFile xmlns="http://schemas.microsoft.com/VisualStudio/2004/01/settings" CurrentProfile="(Default)" GeneratedClassNamespace="RIPharmStatutesAggregator.Properties" GeneratedClassName="Settings">
+  <Profiles />
+  <Settings>
+    <Setting Name="Addresses" Type="System.Collections.Specialized.StringCollection" Scope="User">
+      <Value Profile="(Default)">&lt;?xml version="1.0" encoding="utf-16"?&gt;
+&lt;ArrayOfString xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema"&gt;
+  &lt;string&gt;http://webserver.rilin.state.ri.us/Statutes/TITLE5/5-19.1/INDEX.HTM&lt;/string&gt;
+  &lt;string&gt;http://webserver.rilin.state.ri.us/Statutes/TITLE5/5-19.2/INDEX.HTM&lt;/string&gt;
+  &lt;string&gt;http://webserver.rilin.state.ri.us/Statutes/TITLE21/21-28/INDEX.HTM&lt;/string&gt;
+  &lt;string&gt;http://webserver.rilin.state.ri.us/Statutes/TITLE21/21-31/INDEX.HTM&lt;/string&gt;
+&lt;/ArrayOfString&gt;</Value>
+    </Setting>
+    <Setting Name="SaveLocation" Type="System.String" Scope="User">
+      <Value Profile="(Default)" />
+    </Setting>
+    <Setting Name="LastDownloaded" Type="System.DateTime" Scope="User">
+      <Value Profile="(Default)" />
+    </Setting>
+  </Settings>
 </SettingsFile>
