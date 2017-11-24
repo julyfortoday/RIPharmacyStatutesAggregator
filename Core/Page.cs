@@ -12,9 +12,12 @@ namespace RIPharmStatutesAggregator.Core
         public string Path { get; set; }
         public string Html { get; set; }
         public List<string> Links { get; set; }
+
+        public PageElements Elements { get; set; }
         public Page()
         {
             Links = new List<string>();
+            Elements = new PageElements();
         }
     }
 }

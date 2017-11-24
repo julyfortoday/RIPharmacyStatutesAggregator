@@ -85,7 +85,7 @@ namespace RIPharmStatutesAggregator.Services
             const string linkFullPattern = linkStartPattern + wildCardPattern + linkEndPattern;
 
             // find all links in the index page
-            MatchCollection matches = Regex.Matches(page.Html, linkFullPattern);
+            MatchCollection matches = Regex.Matches(page.Html, linkFullPattern, RegexOptions.IgnoreCase);
 
             foreach (Match match in matches)
             {

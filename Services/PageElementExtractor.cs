@@ -24,11 +24,14 @@ namespace RIPharmStatutesAggregator.Services
         static Tag H3Tag = new Tag("H3");
         static Tag HistoryTag = new Tag("HISTORY");
         static Tag CenterTag = new Tag("CENTER");
-        
-        //var anyChar = "(?s:.*)"; // any char including newline
-        static string[] separator = new string[] { "<BR>" };
 
-        public static PageElements Extract(string html)
+        static string WILDCARD = ".*";
+        static string NEWLINE = "\r\n";
+
+        //var anyChar = "(?s:.*)"; // any char including newline
+        static string[] separator = new string[] { BreakTag.Start };
+
+        public static PageElements Extract(string html, bool isIndex)
         {
             var elements = new PageElements();
 
@@ -39,7 +42,8 @@ namespace RIPharmStatutesAggregator.Services
             var contentStartIndex = ExtractSectionTitle(html, elements);
             ExtractSectionContents(html, elements, contentStartIndex);
 
-            Validate(elements);
+            if(!isIndex)
+                Validate(elements);
             return elements;
         }
 
@@ -61,49 +65,60 @@ namespace RIPharmStatutesAggregator.Services
 
         private static void ExtractTitleHeader(string html, PageElements elements)
         {
-            var match = Regex.Match(html, H1Tag.Start + ".*" + H1Tag.End,
-                RegexOptions.IgnoreCase | RegexOptions.Singleline);
-            var cleaned = match.Value.Replace(H1Tag.Start, "").Replace(H1Tag.End, "").Replace("\r\n", "");
-            var split = cleaned.Split(separator, StringSplitOptions.RemoveEmptyEntries);
-            if (split.Length > 1)
+            var titlePattern = H1Tag.Start + WILDCARD + H1Tag.End;
+            var titleMatch = Regex.Match(html, titlePattern, RegexOptions.IgnoreCase | RegexOptions.Singleline);
+            var titleCleaned = titleMatch.Value.Replace(H1Tag.Start, string.Empty).Replace(H1Tag.End, string.Empty).Replace(NEWLINE, string.Empty);
+            var parts = titleCleaned.Split(separator, StringSplitOptions.RemoveEmptyEntries);
+            if (parts.Length > 1)
             {
-                elements.TitleNumber = (split[0] ?? "").Trim();
-                elements.TitleName = (split[1] ?? "").Trim();
+                elements.TitleNumber = (parts[0] ?? string.Empty).Trim();
+                elements.TitleName = (parts[1] ?? string.Empty).Trim();
             }
         }
 
         private static void ExtractChapterHeader(string html, PageElements elements)
         {
-            var match = Regex.Match(html, H2Tag.Start + ".*" + H2Tag.End,
-                RegexOptions.IgnoreCase | RegexOptions.Singleline);
-            var cleaned = match.Value.Replace(H2Tag.Start, "").Replace(H2Tag.End, "").Replace("\r\n", "");
-            var split = cleaned.Split(separator, StringSplitOptions.RemoveEmptyEntries);
-            if (split.Length > 1)
+            var chapterPattern = H2Tag.Start + WILDCARD + H2Tag.End;
+            var chapterMatch = Regex.Match(html, chapterPattern, RegexOptions.IgnoreCase | RegexOptions.Singleline);
+            var chapterCleaned = chapterMatch.Value.Replace(H2Tag.Start, string.Empty).Replace(H2Tag.End, string.Empty).Replace(NEWLINE, string.Empty);
+            var parts = chapterCleaned.Split(separator, StringSplitOptions.RemoveEmptyEntries);
+            if (parts.Length > 1)
             {
-                elements.ChapterNumber = (split[0] ?? "").Trim();
-                elements.ChapterName = (split[1] ?? "").Trim();
+                elements.ChapterNumber = (parts[0] ?? string.Empty).Trim();
+                elements.ChapterName = (parts[1] ?? string.Empty).Trim();
             }
+        }
+
+        private static string GetAnyCharsWithinLimit(int limit)
+        {
+            var anyChar = ".{0," + limit + "}";
+            return anyChar;
         }
 
         private static void ExtractArticleHeader(string html, PageElements elements)
         {
-            if (html.Contains("<I>"))
+            if (html.Contains(ItalicTag.Start))
             {
-                // using tolerance here, since some pages use <I> tags elsewhere and can cause false positives without some kind of limit
-                var startMatch = Regex.Match(html, H2Tag.Start + ".{0," + tolerance + "}" + ItalicTag.Start,
-                    RegexOptions.IgnoreCase | RegexOptions.Singleline);
-                var articleStart = startMatch.Index + startMatch.Length;
+                // The first <I> contained within a an h2 header signifies an article heading
+                // but sometimes the section body contains <I> tags and they can cause false positives without some kind of limit
+                var anyCharsWithinLimit = GetAnyCharsWithinLimit(tolerance);
 
-                var endMatch = Regex.Match(html, ItalicTag.End + ".{0," + tolerance + "}" + H2Tag.End,
-                    RegexOptions.IgnoreCase | RegexOptions.Singleline);
-                var articleContents = html.Substring(articleStart, endMatch.Index - articleStart);
-                var cleaned = articleContents.Replace(ItalicTag.Start, "").Replace(ItalicTag.End, "").Replace("\r\n", "");
+                var articleStartPattern = H2Tag.Start + anyCharsWithinLimit + ItalicTag.Start;
+                var articleStartMatch = Regex.Match(html, articleStartPattern, RegexOptions.IgnoreCase | RegexOptions.Singleline);
+                var articleStartIndex = articleStartMatch.Index + articleStartMatch.Length;
 
-                var split = cleaned.Split(separator, StringSplitOptions.RemoveEmptyEntries);
-                if (split.Length > 1)
+                var articleEndPattern = ItalicTag.End + anyCharsWithinLimit + H2Tag.End;
+                var articleEndMatch = Regex.Match(html, articleEndPattern, RegexOptions.IgnoreCase | RegexOptions.Singleline);
+                var articleEndIndex = articleEndMatch.Index - articleStartIndex;
+
+                var articleContents = html.Substring(articleStartIndex, articleEndIndex);
+                var articleCleaned = articleContents.Replace(ItalicTag.Start, string.Empty).Replace(ItalicTag.End, string.Empty).Replace(NEWLINE, string.Empty);
+
+                var parts = articleCleaned.Split(separator, StringSplitOptions.RemoveEmptyEntries);
+                if (parts.Length > 1)
                 {
-                    elements.ArticleNumber = (split[0] ?? "").Trim();
-                    elements.ArticleName = (split[1] ?? "").Trim();
+                    elements.ArticleNumber = (parts[0] ?? string.Empty).Trim();
+                    elements.ArticleName = (parts[1] ?? string.Empty).Trim();
                 }
             }
         }
@@ -112,31 +127,36 @@ namespace RIPharmStatutesAggregator.Services
         {
             if (html.Contains(HistoryTag.Start))
             {
-                var historyMatch = Regex.Match(html, HistoryTag.Start + ".*" + HistoryTag.End,
-                    RegexOptions.IgnoreCase | RegexOptions.Singleline);
-                var cleaned = historyMatch.Value.Replace(HistoryTag.Start, "").Replace(HistoryTag.End, "").Replace("\r\n", "");
-                var split = cleaned.Split(separator, StringSplitOptions.RemoveEmptyEntries);
-                if (split.Length > 1)
+                var historyPattern = HistoryTag.Start + WILDCARD + HistoryTag.End;
+                var historyMatch = Regex.Match(html, historyPattern, RegexOptions.IgnoreCase | RegexOptions.Singleline);
+                var historyCleaned = historyMatch.Value.Replace(HistoryTag.Start, string.Empty)
+                    .Replace(HistoryTag.End, string.Empty).Replace(NEWLINE, string.Empty);
+
+                var parts = historyCleaned.Split(separator, StringSplitOptions.RemoveEmptyEntries);
+                if (parts.Length > 1)
                 {
-                    elements.HistoryHeader = (split[0] ?? "").Trim();
-                    elements.HistoryList = (split[1] ?? "").Trim();
-                    elements.HistoryList = elements.HistoryList.Replace("(", "").Replace(")", "");
+                    elements.HistoryHeader = (parts[0] ?? string.Empty).Trim();
+                    elements.HistoryList = (parts[1] ?? string.Empty).Trim();
+                    elements.HistoryList = elements.HistoryList.Replace("(", string.Empty).Replace(")", string.Empty);
                 }
             }
         }
 
         private static int ExtractSectionTitle(string html, PageElements elements)
         {
-            var anyChar = ".{0," + tolerance + "}";
-            var startpattern = CenterTag.End + anyChar + BreakTag.Start + anyChar + ParagraphTag.Start + anyChar + BoldTag.Start;
-            var startMatch = Regex.Match(html, startpattern, RegexOptions.IgnoreCase | RegexOptions.Singleline);
-            var startindex = (startMatch.Index + startMatch.Length);
+            var anyCharsWithinLimit = GetAnyCharsWithinLimit(tolerance);
 
-            var endMatch = Regex.Match(html, BoldTag.End + anyChar + BreakTag.Start + anyChar + BreakTag.Start,
-                RegexOptions.IgnoreCase | RegexOptions.Singleline);
+            var startPattern = CenterTag.End + anyCharsWithinLimit + BreakTag.Start + anyCharsWithinLimit +
+                ParagraphTag.Start + anyCharsWithinLimit + BoldTag.Start;
+            var startMatch = Regex.Match(html, startPattern, RegexOptions.IgnoreCase | RegexOptions.Singleline);
+            var startIndex = (startMatch.Index + startMatch.Length);
+
+            var endPattern = BoldTag.End + anyCharsWithinLimit + BreakTag.Start + anyCharsWithinLimit + BreakTag.Start;
+            var endMatch = Regex.Match(html, endPattern, RegexOptions.IgnoreCase | RegexOptions.Singleline);
             var endIndex = endMatch.Index;
-            var secTitle = html.Substring(startindex, endIndex - startindex);
-            var cleaned = secTitle.Replace("\r\n","").Trim();
+
+            var secTitle = html.Substring(startIndex, endIndex - startIndex);
+            var cleaned = secTitle.Replace(NEWLINE, string.Empty).Trim();
             elements.SectionTitle = cleaned;
 
             int contentStartIndex = endMatch.Index + endMatch.Length;
@@ -148,18 +168,32 @@ namespace RIPharmStatutesAggregator.Services
             var bodyEndIndex = 0;
             if (html.Contains(HistoryTag.Start))
                 bodyEndIndex = html.IndexOf(HistoryTag.Start);
-            else
+            else if (html.Contains(BodyTag.End))
                 bodyEndIndex = html.IndexOf(BodyTag.End);
+            else
+                bodyEndIndex = html.Length;
 
             var contents = html.Substring(bodyStartIndex, bodyEndIndex - bodyStartIndex);
-            var cleaned = contents.Replace("<BR>", "");
-            var lines = cleaned.Split(new string[] { "\r\n" }, StringSplitOptions.RemoveEmptyEntries);
+            var cleaned = contents.Replace(BreakTag.Start, string.Empty);
+            var lines = cleaned.Split(new string[] { NEWLINE }, StringSplitOptions.RemoveEmptyEntries);
             for(int i = 0; i < lines.Count(); i++)
             {
-                lines[i] = lines[i].Replace(ParagraphTag.Start, "").Trim();
+                lines[i] = lines[i].Replace(ParagraphTag.Start, string.Empty).Trim();
             }
 
-            elements.SectionContents = lines;
+            var splitLines = new List<Tuple<string, string>>();
+
+            foreach(var line in lines)
+            {
+                var item1 = Regex.Match("(" + WILDCARD + ")", string.Empty).Value;
+                var item2 = string.Empty;
+                if(!string.IsNullOrWhiteSpace(item1))
+                    item2 = line.Replace(item1, string.Empty);
+
+                var tuple = new Tuple<string, string>(item1, item2);
+                splitLines.Add(tuple);
+            }
+            elements.SectionContents = splitLines;
         }
     }
 }

@@ -19,7 +19,7 @@ namespace RIPharmStatutesAggregator.Core
 
         public string SectionTitle { get; set; }
 
-        public string[] SectionContents { get; set; }
+        public List<Tuple<string,string>> SectionContents { get; set; }
 
         public string HistoryHeader { get; set; }
         public string HistoryList { get; set; }

@@ -54,7 +54,15 @@
     </Compile>
     <Compile Include="Core\Page.cs" />
     <Compile Include="Core\PageElements.cs" />
+    <Compile Include="Core\StatuteElements\Article.cs" />
+    <Compile Include="Core\StatuteElements\Chapter.cs" />
+    <Compile Include="Core\StatuteElements\Line.cs" />
+    <Compile Include="Core\StatuteElements\Section.cs" />
+    <Compile Include="Core\StatuteElements\Title.cs" />
+    <Compile Include="Core\StatuteElements\StatuteListing.cs" />
     <Compile Include="Core\Tag.cs" />
+    <Compile Include="Services\ListingBuilder.cs" />
+    <Compile Include="Services\ListingFormatter.cs" />
     <Compile Include="Services\PageFetcher.cs" />
     <Compile Include="Services\PageAggregator.cs" />
     <Compile Include="MainForm.cs">

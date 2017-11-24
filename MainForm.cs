@@ -44,6 +44,11 @@ namespace RIPharmStatutesAggregator
             {
                 saveButton.Enabled = false;
             }
+
+            // DEBUG
+            saveButton.Enabled = true;
+            fetcher.OverwriteSavedPages = false;
+            pages = fetcher.GetPages();
         }
 
         private void downloadButton_Click(object sender, EventArgs e)
