@@ -142,17 +142,37 @@ namespace RIPharmStatutesAggregator.Services
 
             html.AppendLine();
             html.AppendLine(Tags.MakeDiv("index"));
-            html.Append(Tags.H4.Start);
+            html.Append(Tags.H5.Start);
             html.Append("Index of Sections");
-            html.AppendLine(Tags.H4.End);
+            html.AppendLine(Tags.H5.End);
             html.Append(BuildChapterIndex(chapter));
             html.AppendLine(Tags.Div.End);
 
-            foreach (var section in chapter.Sections)
+            if(chapter.Articles.Count < 1 )
             {
-                var sectionHtml = FormatSection(section);
-                html.AppendLine(sectionHtml);
+                foreach (var section in chapter.Sections)
+                {
+                    var sectionHtml = FormatSection(section);
+                    html.AppendLine(sectionHtml);
+                }
             }
+            else
+            {
+                foreach (var article in chapter.Articles)
+                {
+                    html.Append(Tags.H3.Start);
+                    html.Append(article.ArticleNumber);
+                    html.Append(" ");
+                    html.AppendLine(article.ArticleName);
+                    html.Append(Tags.H3.End);
+                    foreach (var section in article.Sections)
+                    {
+                        var sectionHtml = FormatSection(section);
+                        html.AppendLine(sectionHtml);
+                    }
+                }
+            }
+
 
             return html.ToString();
         }
@@ -160,14 +180,35 @@ namespace RIPharmStatutesAggregator.Services
         private static string BuildChapterIndex(Chapter chapter)
         {
             var html = new StringBuilder();
-            html.AppendLine(Tags.List.Start);
-            foreach (var section in chapter.Sections)
+
+            if (chapter.Articles.Count < 1)
             {
-                html.AppendLine(Tags.ListItem.Start);
-                html.AppendLine(Tags.AnchorLink(section.LinkID, section.SectionNumber + " " + section.SectionName));
-                html.AppendLine(Tags.ListItem.End);
+                html.AppendLine(Tags.List.Start);
+                foreach (var section in chapter.Sections)
+                {
+                    html.AppendLine(Tags.ListItem.Start);
+                    html.AppendLine(Tags.AnchorLink(section.LinkID, section.SectionNumber + " " + section.SectionName));
+                    html.AppendLine(Tags.ListItem.End);
+                }
+                html.AppendLine(Tags.List.End);
             }
-            html.AppendLine(Tags.List.End);
+            else
+            {
+                foreach (var article in chapter.Articles)
+                {
+                    html.Append(Tags.MakeDiv("article"));
+                    html.Append(article.ArticleNumber + " " + article.ArticleName);
+                    html.Append(Tags.Div.End);
+                    html.AppendLine(Tags.List.Start);
+                    foreach (var section in article.Sections)
+                    {
+                        html.AppendLine(Tags.ListItem.Start);
+                        html.AppendLine(Tags.AnchorLink(section.LinkID, section.SectionNumber + " " + section.SectionName));
+                        html.AppendLine(Tags.ListItem.End);
+                    }
+                    html.AppendLine(Tags.List.End);
+                }
+            }
             return html.ToString();
         }
 
@@ -179,12 +220,12 @@ namespace RIPharmStatutesAggregator.Services
             html.Append(Tags.Anchor(section.LinkID));
 
             html.AppendLine();
-            html.Append(Tags.H3.Start);
+            html.Append(Tags.H4.Start);
             html.Append("&sect; ");
             html.Append(section.SectionNumber);
             html.Append(" ");
             html.Append(section.SectionName);
-            html.Append(Tags.H3.End);
+            html.Append(Tags.H4.End);
 
             if (section.Lines != null && section.Lines.Count > 0)
             {
@@ -254,9 +295,9 @@ namespace RIPharmStatutesAggregator.Services
             var html = new StringBuilder();
             html.AppendLine();
             html.AppendLine(Tags.MakeDiv("section-history"));
-            html.AppendLine(Tags.H4.Start);
+            html.AppendLine(Tags.H5.Start);
             html.AppendLine("History of Section");
-            html.AppendLine(Tags.H4.End);
+            html.AppendLine(Tags.H5.End);
             html.AppendLine(historyList.ToString());
             html.Append(Tags.Div.End);
             return html.ToString();

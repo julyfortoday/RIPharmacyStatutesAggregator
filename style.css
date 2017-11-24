@@ -27,6 +27,12 @@
     margin-left: 10px;
     margin-right: 10px;
 }
+#article {
+    font-weight: bold;
+    font-size: 100%;
+    margin-left: 30px;
+    text-decoration: underline;
+}
 div {
     margin-top:0px;
     margin-bottom:0px;
@@ -50,10 +56,16 @@ h2 {
     margin-bottom:0px;
 }
 h3 {
+    font-size: 160%;
+    margin-left: 30px;
+}
+h4 {
+    font-size: 130%;
     margin-left: 20px;
     text-decoration: underline;
 }
-h4 {
+h5 {
+    font-size: 100%;
     margin-left: 30px;
 }
 p {

@@ -33,6 +33,7 @@ namespace RIPharmStatutesAggregator.Core
         public static Tag H2 = new Tag("H2");
         public static Tag H3 = new Tag("H3");
         public static Tag H4 = new Tag("H4");
+        public static Tag H5 = new Tag("H5");
         public static Tag List = new Tag("UL");
         public static Tag ListItem = new Tag("LI");
         public static Tag Div = new Tag("DIV");

@@ -97,10 +97,41 @@ namespace RIPharmStatutesAggregator.Services
 
             foreach (var subPage in subPages)
             {
-                chapter.Sections.Add(BuildSection(subPage));
+                var section = BuildSection(subPage);
+                chapter.Sections.Add(section);
+                if(HasArticle(subPage))
+                {
+                    var article = BuildArticle(subPage);
+                    var matchedArticle = chapter.Articles.FirstOrDefault(x => x.ArticleNumber == article.ArticleNumber);
+
+                    if (matchedArticle != null)
+                    {
+                        // pre-existing article, so use it instead of the new one
+                        matchedArticle.Sections.Add(section);
+                    }
+                    else
+                    {
+                        // this is a new article, add it to chapter and use it
+                        chapter.Articles.Add(article);
+                        article.Sections.Add(section);
+                    }
+                }
             }
 
             return chapter;
+        }
+
+        public static bool HasArticle(Page page)
+        {
+            return !string.IsNullOrWhiteSpace(page.Elements.ArticleNumber);
+        }
+
+        public static Article BuildArticle(Page page)
+        {
+            var article = new Article();
+            article.ArticleName = page.Elements.ArticleName;
+            article.ArticleNumber = page.Elements.ArticleNumber;
+            return article;
         }
 
         public static Section BuildSection(Page page)
