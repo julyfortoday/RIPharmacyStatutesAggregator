@@ -4,74 +4,102 @@
     Color: #424242;
     margin:0px;
 }
-#title {
+#page-title {
     text-align: center;
     font-size: 300%;
     Color: #92b8d5;
 }
-#status {
+#page-status {
     font-weight: bold;
     text-align: center;
+    color: firebrick;
+    margin-top:30px;
+    margin-bottom:30px;
 }
 #page-index {
     font-size: 110%;
     padding-top:10px;
+    padding-bottom:20px;
     Color: slategray;
-    background-color: white;
 }
-#index {
-    background-color: white;
-}
-#content {
+#page-content {
     background-color: white;
     margin-left: 10px;
     margin-right: 10px;
+}
+#index {
 }
 #article {
     font-weight: bold;
     font-size: 100%;
     margin-left: 30px;
+    margin-top: 10px;
     text-decoration: underline;
+}
+#title-header {
+    Color: #d09837;
+    background-color: #496d89;
+    padding-top:10px;
+    padding-bottom:10px;
+    margin-top:0px;
+    font-weight:bold;
+    font-size: 120%;
+    margin-bottom:-30px;
+}
+#title-header a:link{ color:#af9a74; } 
+#title-header a:visited{ color:#af9a74; } 
+#chapter-header {
+    Color: #424242;
+    background-color: #92b8d5;
+    padding-top:15px;
+    padding-bottom:15px;
+    margin-top:30px;
+    margin-bottom:30px;
+}
+#section-body {
+}
+#section-history {
+    margin-bottom:20px;
 }
 div {
     margin-top:0px;
     margin-bottom:0px;
 }
 h1 {
-    Color: #d09837;
-    background-color: #496d89;
-    padding-left:30px;
-    padding-top:10px;
-    padding-bottom:10px;
-    margin-top:0px;
-    margin-bottom:0px;
+    margin:0px;
+    margin-left: 30px;
 }
 h2 {
-    Color: #424242;
-    background-color: #92b8d5;
-    padding-left:30px;
-    padding-top:15px;
-    padding-bottom:15px;
-    margin-top:0px;
-    margin-bottom:0px;
+    margin:0px;
+    margin-left: 30px;
 }
 h3 {
     font-size: 160%;
+    margin-top:20px;
+    margin-bottom:0px;
     margin-left: 30px;
 }
 h4 {
     font-size: 130%;
+    margin-top:10px;
+    margin-bottom:0px;
     margin-left: 20px;
     text-decoration: underline;
 }
 h5 {
     font-size: 100%;
+    margin:0px;
     margin-left: 30px;
+    margin-bottom:0px;
 }
 p {
+    margin-top:8px;
+    margin-bottom:8px;
 	margin-left: 30px;
 	margin-right: 30px;
 }
 ul {
 	margin-left: 30px;
+    margin-top:0px;
+    margin-bottom:0px;
 }
