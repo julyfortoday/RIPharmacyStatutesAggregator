@@ -11,11 +11,10 @@ namespace RIPharmStatutesAggregator.Services
 {
     public class PageAggregator
     {
-        private StyleSheetProvider styleSheetProvider;
-
+        private ListingFormatter formatter;
         public PageAggregator(StyleSheetProvider styleSheetProvider)
         {
-            this.styleSheetProvider = styleSheetProvider;
+            formatter = new ListingFormatter(styleSheetProvider);
         }
 
         //<a href="#Section1.2">Section 1.2</a>
@@ -24,7 +23,7 @@ namespace RIPharmStatutesAggregator.Services
         internal string Aggregate(List<Page> pages)
         {
             var listing = ListingBuilder.BuildListing(pages);
-            var formatted = ListingFormatter.Format(listing);
+            var formatted = formatter.Format(listing);
             return formatted;
         }
 
@@ -74,7 +73,7 @@ namespace RIPharmStatutesAggregator.Services
             html.AppendLine("<html>");
             html.AppendLine("<head>");
             html.AppendLine("<style>");
-            html.AppendLine(styleSheetProvider.GetStyleSheet());
+            //html.AppendLine(styleSheetProvider.GetStyleSheet());
             html.AppendLine("</style>");
             html.AppendLine("</head>");
             html.AppendLine("<body>");

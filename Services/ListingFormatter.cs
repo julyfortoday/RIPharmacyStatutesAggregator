@@ -9,7 +9,15 @@ namespace RIPharmStatutesAggregator.Services
 {
     public class ListingFormatter
     {
-        internal static string Format(StatuteListing listing)
+        static string NEWLINE = "\r\n";
+        private StyleSheetProvider styleSheetProvider;
+
+        public ListingFormatter(StyleSheetProvider styleSheetProvider)
+        {
+            this.styleSheetProvider = styleSheetProvider;
+        }
+
+        internal string Format(StatuteListing listing)
         {
             var pageIndex = CreatePageIndex();
             var page = CreatePage(listing);
@@ -17,7 +25,7 @@ namespace RIPharmStatutesAggregator.Services
             return html;
         }
 
-        private static string AddTopLevelHTML(string index, string body)
+        private string AddTopLevelHTML(string index, string body)
         {
             var pageTitle = "Rhode Island Pharmacy Statutes";
 
@@ -25,7 +33,7 @@ namespace RIPharmStatutesAggregator.Services
             html.AppendLine("<html>");
             html.AppendLine("<head>");
             html.AppendLine("<style>");
-            //html.AppendLine(styleSheetProvider.GetStyleSheet());
+            html.AppendLine(styleSheetProvider.GetStyleSheet());
             html.AppendLine("</style>");
             html.AppendLine("</head>");
             html.AppendLine("<body>");
@@ -116,31 +124,74 @@ namespace RIPharmStatutesAggregator.Services
             html.AppendLine();
             html.Append("<a name=\"#");
             html.Append(section.SafeName);
-            html.Append("></a>");
+            html.Append("\"></a>");
 
             html.AppendLine();
-            html.Append("<p>");
+            html.Append("<h3>");
             html.Append("&sect; ");
             html.Append(section.SectionNumber);
             html.Append(" ");
             html.Append(section.SectionName);
-            html.Append("</p>");
-            html.AppendLine();
+            html.Append("</h3>");
 
+            html.AppendLine();
+            html.AppendLine("<div id=\"section-body\">");
             foreach (var line in section.Lines)
             {
                 html.Append("<p>");
                 if(!string.IsNullOrWhiteSpace(line.Identifier))
                 {
+                    html.Append("<b>");
                     html.Append("(");
                     html.Append(line.Identifier);
-                    html.Append(") ");
+                    html.Append(")");
+                    html.Append("</b> ");
                 }
                 html.Append(line.Contents);
                 html.Append("</p>");
                 html.AppendLine();
             }
+            html.AppendLine("</div>");
+            html.AppendLine();
 
+            var historyList = FormatHistoryList(section.HistoryList);
+            if(!string.IsNullOrWhiteSpace(historyList))
+            {
+                //html.AppendLine(section.HistoryHeader);
+                html.Append(historyList);
+            }
+
+            return html.ToString();
+        }
+
+        private static string FormatHistoryList(string list)
+        {
+            if (string.IsNullOrWhiteSpace(list))
+                return string.Empty;
+            
+            var historyList = new StringBuilder();
+            var historyEntries = list.Replace("(", "").Replace(")", "").Replace("&sect;", "[SECT_SYMBOL]").Split(';');
+
+            if (historyEntries.Count() > 0)
+            {
+                historyList.AppendLine("<ul>");
+                foreach (var entry in historyEntries)
+                {
+                    var entryMod = entry;
+                    if (entry.EndsWith(".")) // remove unneeded period at end of list
+                        entryMod = entry.Substring(0,entry.Length-1);
+                    historyList.AppendLine("<li>");
+                    historyList.AppendLine(entryMod.Replace("[SECT_SYMBOL]", "&sect;"));
+                    historyList.AppendLine("</li>");
+                }
+                historyList.Append("</ul>");
+            }
+
+            var html = new StringBuilder();
+            html.AppendLine("<div id=\"section-history\">");
+            html.AppendLine("<h4>History of Section</h4>");
+            html.AppendLine(historyList.ToString());
+            html.Append("</div>");
             return html.ToString();
         }
     }

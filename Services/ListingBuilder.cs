@@ -107,6 +107,8 @@ namespace RIPharmStatutesAggregator.Services
             section.SectionName = page.Elements.SectionName;
             section.SectionNumber = page.Elements.SectionNumber;
             section.Lines = BuildLines(page.Elements.SectionContents);
+            section.HistoryHeader = page.Elements.HistoryHeader;
+            section.HistoryList = page.Elements.HistoryList;
             return section;
         }
 

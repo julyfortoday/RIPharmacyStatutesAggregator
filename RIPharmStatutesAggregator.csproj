@@ -61,6 +61,7 @@
     <Compile Include="Core\StatuteElements\Title.cs" />
     <Compile Include="Core\StatuteElements\StatuteListing.cs" />
     <Compile Include="Core\Tag.cs" />
+    <Compile Include="Core\Tags.cs" />
     <Compile Include="Services\ListingBuilder.cs" />
     <Compile Include="Services\ListingFormatter.cs" />
     <Compile Include="Services\PageFetcher.cs" />
