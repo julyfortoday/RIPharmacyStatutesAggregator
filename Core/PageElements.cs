@@ -17,7 +17,8 @@ namespace RIPharmStatutesAggregator.Core
         public string ArticleNumber { get; set; }
         public string ArticleName { get; set; }
 
-        public string SectionTitle { get; set; }
+        public string SectionNumber { get; set; }
+        public string SectionName { get; set; }
 
         public List<Tuple<string,string>> SectionContents { get; set; }
 

@@ -104,8 +104,8 @@ namespace RIPharmStatutesAggregator.Services
         public static Section BuildSection(Page page)
         {
             var section = new Section();
-            section.SectionName = page.Elements.SectionTitle;
-            section.SectionNumber = page.Elements.SectionTitle;
+            section.SectionName = page.Elements.SectionName;
+            section.SectionNumber = page.Elements.SectionNumber;
             section.Lines = BuildLines(page.Elements.SectionContents);
             return section;
         }

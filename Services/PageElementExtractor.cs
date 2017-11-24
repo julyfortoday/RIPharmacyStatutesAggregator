@@ -22,28 +22,35 @@ namespace RIPharmStatutesAggregator.Services
         static Tag H1Tag = new Tag("H1");
         static Tag H2Tag = new Tag("H2");
         static Tag H3Tag = new Tag("H3");
+        static Tag ListTag = new Tag("UL");
         static Tag HistoryTag = new Tag("HISTORY");
         static Tag CenterTag = new Tag("CENTER");
 
         static string WILDCARD = ".*";
         static string NEWLINE = "\r\n";
+        static string SECTION_SYMBOL = "&sect;";
 
         //var anyChar = "(?s:.*)"; // any char including newline
-        static string[] separator = new string[] { BreakTag.Start };
 
         public static PageElements Extract(string html, bool isIndex)
         {
             var elements = new PageElements();
 
-            ExtractTitleHeader(html, elements);
-            ExtractChapterHeader(html, elements);
-            ExtractArticleHeader(html, elements);
-            ExtractHistoryFooter(html, elements);
-            var contentStartIndex = ExtractSectionTitle(html, elements);
-            ExtractSectionContents(html, elements, contentStartIndex);
-
-            if(!isIndex)
+            if (!isIndex)
+            {
+                ExtractTitleHeader(html, H1Tag, elements);
+                ExtractChapterHeader(html, H2Tag, elements);
+                ExtractArticleHeader(html, elements);
+                ExtractHistoryFooter(html, elements);
+                var contentStartIndex = ExtractSectionTitle(html, elements);
+                ExtractSectionContents(html, elements, contentStartIndex);
                 Validate(elements);
+            }
+            else
+            {
+                ExtractChapterHeader(html, H1Tag, elements);
+            }
+
             return elements;
         }
 
@@ -57,17 +64,19 @@ namespace RIPharmStatutesAggregator.Services
                 throw new Exception("TitleName");
             else if (string.IsNullOrEmpty(elements.TitleNumber))
                 throw new Exception("TitleNumber");
-            else if (string.IsNullOrEmpty(elements.SectionTitle))
+            else if (string.IsNullOrEmpty(elements.SectionNumber))
                 throw new Exception("SectionTitle");
             else if (elements.SectionContents == null || elements.SectionContents.Count() < 1)
                 throw new Exception("SectionContents");
         }
 
-        private static void ExtractTitleHeader(string html, PageElements elements)
+        private static void ExtractTitleHeader(string html, Tag tag,PageElements elements)
         {
-            var titlePattern = H1Tag.Start + WILDCARD + H1Tag.End;
+            var titlePattern = tag.Start + WILDCARD + tag.End;
             var titleMatch = Regex.Match(html, titlePattern, RegexOptions.IgnoreCase | RegexOptions.Singleline);
-            var titleCleaned = titleMatch.Value.Replace(H1Tag.Start, string.Empty).Replace(H1Tag.End, string.Empty).Replace(NEWLINE, string.Empty);
+            var titleCleaned = titleMatch.Value.Replace(tag.Start, string.Empty).Replace(tag.End, string.Empty).Replace(NEWLINE, string.Empty);
+
+            var separator = new string[] { BreakTag.Start };
             var parts = titleCleaned.Split(separator, StringSplitOptions.RemoveEmptyEntries);
             if (parts.Length > 1)
             {
@@ -76,11 +85,13 @@ namespace RIPharmStatutesAggregator.Services
             }
         }
 
-        private static void ExtractChapterHeader(string html, PageElements elements)
+        private static void ExtractChapterHeader(string html, Tag tag, PageElements elements)
         {
-            var chapterPattern = H2Tag.Start + WILDCARD + H2Tag.End;
+            var chapterPattern = tag.Start + WILDCARD + tag.End;
             var chapterMatch = Regex.Match(html, chapterPattern, RegexOptions.IgnoreCase | RegexOptions.Singleline);
-            var chapterCleaned = chapterMatch.Value.Replace(H2Tag.Start, string.Empty).Replace(H2Tag.End, string.Empty).Replace(NEWLINE, string.Empty);
+            var chapterCleaned = chapterMatch.Value.Replace(tag.Start, string.Empty).Replace(tag.End, string.Empty).Replace(NEWLINE, string.Empty);
+
+            var separator = new string[] { BreakTag.Start };
             var parts = chapterCleaned.Split(separator, StringSplitOptions.RemoveEmptyEntries);
             if (parts.Length > 1)
             {
@@ -114,6 +125,7 @@ namespace RIPharmStatutesAggregator.Services
                 var articleContents = html.Substring(articleStartIndex, articleEndIndex);
                 var articleCleaned = articleContents.Replace(ItalicTag.Start, string.Empty).Replace(ItalicTag.End, string.Empty).Replace(NEWLINE, string.Empty);
 
+                var separator = new string[] { BreakTag.Start };
                 var parts = articleCleaned.Split(separator, StringSplitOptions.RemoveEmptyEntries);
                 if (parts.Length > 1)
                 {
@@ -132,6 +144,7 @@ namespace RIPharmStatutesAggregator.Services
                 var historyCleaned = historyMatch.Value.Replace(HistoryTag.Start, string.Empty)
                     .Replace(HistoryTag.End, string.Empty).Replace(NEWLINE, string.Empty);
 
+                var separator = new string[] { BreakTag.Start };
                 var parts = historyCleaned.Split(separator, StringSplitOptions.RemoveEmptyEntries);
                 if (parts.Length > 1)
                 {
@@ -156,8 +169,15 @@ namespace RIPharmStatutesAggregator.Services
             var endIndex = endMatch.Index;
 
             var secTitle = html.Substring(startIndex, endIndex - startIndex);
-            var cleaned = secTitle.Replace(NEWLINE, string.Empty).Trim();
-            elements.SectionTitle = cleaned;
+            var cleaned = secTitle.Replace(NEWLINE, string.Empty).Replace(SECTION_SYMBOL, string.Empty).Trim();
+
+            var separator = new string[] { " " };
+            var parts = cleaned.Split(separator, StringSplitOptions.RemoveEmptyEntries);
+            if (parts.Length > 1)
+            {
+                elements.SectionNumber = (parts[0] ?? string.Empty).Trim();
+                elements.SectionName = (parts[1] ?? string.Empty).Trim();
+            }
 
             int contentStartIndex = endMatch.Index + endMatch.Length;
             return contentStartIndex;
@@ -165,6 +185,11 @@ namespace RIPharmStatutesAggregator.Services
 
         private static void ExtractSectionContents(string html, PageElements elements, int bodyStartIndex = 0)
         {
+            if (html.Contains(ListTag.Start))
+            {
+                return;
+            }
+
             var bodyEndIndex = 0;
             if (html.Contains(HistoryTag.Start))
                 bodyEndIndex = html.IndexOf(HistoryTag.Start);
@@ -183,14 +208,20 @@ namespace RIPharmStatutesAggregator.Services
 
             var splitLines = new List<Tuple<string, string>>();
 
-            foreach(var line in lines)
+            foreach (var line in lines)
             {
-                var item1 = Regex.Match("(" + WILDCARD + ")", string.Empty).Value;
-                var item2 = string.Empty;
-                if(!string.IsNullOrWhiteSpace(item1))
-                    item2 = line.Replace(item1, string.Empty);
+                var item1 = string.Empty;
+                var item2 = line;
+                if (line.TrimStart().StartsWith("("))
+                {
+                    var openParen = line.IndexOf("(");
+                    var closingParen = line.IndexOf(")");
+                    item1 = line.Substring(openParen, closingParen + 1);
+                    if (!string.IsNullOrWhiteSpace(item1))
+                        item2 = line.Replace(item1, string.Empty);
+                }
 
-                var tuple = new Tuple<string, string>(item1, item2);
+                var tuple = new Tuple<string, string>(item1.Replace("(", string.Empty).Replace(")", string.Empty), item2.Trim());
                 splitLines.Add(tuple);
             }
             elements.SectionContents = splitLines;

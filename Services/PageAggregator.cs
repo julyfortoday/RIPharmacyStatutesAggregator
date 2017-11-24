@@ -114,7 +114,7 @@ namespace RIPharmStatutesAggregator.Services
             foreach (var page in subPages)
             {
                 sb.Append(AdjustPage(page.Html, page));
-                index.Append("<li><a href=\"#" + page.Elements.SectionTitle.Replace(" ", "_") + "\">"+ page.Elements.SectionTitle + "</a></li>");
+                index.Append("<li><a href=\"#" + page.Elements.SectionNumber.Replace(" ", "_") + "\">"+ page.Elements.SectionNumber + "</a></li>");
             }
             index.Append("</ul>");
 
