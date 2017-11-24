@@ -31,6 +31,7 @@ namespace RIPharmStatutesAggregator.Services
                 ExtractArticleHeader(html, elements);
                 ExtractHistoryFooter(html, elements);
                 var contentStartIndex = ExtractSectionTitle(html, elements);
+
                 ExtractSectionContents(html, elements, contentStartIndex);
                 Validate(elements);
             }
@@ -54,7 +55,7 @@ namespace RIPharmStatutesAggregator.Services
                 throw new Exception("TitleNumber");
             else if (string.IsNullOrEmpty(elements.SectionNumber))
                 throw new Exception("SectionTitle");
-            else if (elements.SectionContents == null || elements.SectionContents.Count() < 1)
+            else if (elements.SectionContents == null)
                 throw new Exception("SectionContents");
         }
 
@@ -190,7 +191,11 @@ namespace RIPharmStatutesAggregator.Services
 
             var contents = html.Substring(bodyStartIndex, bodyEndIndex - bodyStartIndex);
             var cleaned = contents.Replace(Tags.Break.Start, string.Empty);
-            var lines = cleaned.Split(new string[] { NEWLINE }, StringSplitOptions.RemoveEmptyEntries);
+            var lines = cleaned.Split(new string[] { NEWLINE }, StringSplitOptions.RemoveEmptyEntries)
+                .Where(x => !string.IsNullOrWhiteSpace(x))
+                .Select(s => s.Trim())
+                .ToList();
+
             for(int i = 0; i < lines.Count(); i++)
             {
                 lines[i] = lines[i].Replace(Tags.Paragraph.Start, string.Empty).Trim();

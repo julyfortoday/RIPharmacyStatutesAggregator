@@ -136,12 +136,31 @@ namespace RIPharmStatutesAggregator.Services
             html.Append(section.SectionName);
             html.Append(Tags.H3.End);
 
+            if (section.Lines != null && section.Lines.Count > 0)
+            {
+                html.Append(FormatSectionContents(section.Lines));
+            }
+
+            var historyList = FormatHistoryList(section.HistoryList);
+            if(!string.IsNullOrWhiteSpace(historyList))
+            {
+                //html.AppendLine(section.HistoryHeader);
+                html.Append(historyList);
+            }
+
+            return html.ToString();
+        }
+
+        private static string FormatSectionContents(List<Line> lines)
+        {
+            var html = new StringBuilder();
+
             html.AppendLine();
             html.AppendLine(Tags.MakeDiv("section-body"));
-            foreach (var line in section.Lines)
+            foreach (var line in lines)
             {
                 html.Append(Tags.Paragraph.Start);
-                if(!string.IsNullOrWhiteSpace(line.Identifier))
+                if (!string.IsNullOrWhiteSpace(line.Identifier))
                 {
                     html.Append(Tags.Bold.Start);
                     html.Append("(");
@@ -155,14 +174,6 @@ namespace RIPharmStatutesAggregator.Services
                 html.AppendLine();
             }
             html.AppendLine(Tags.Div.End);
-            html.AppendLine();
-
-            var historyList = FormatHistoryList(section.HistoryList);
-            if(!string.IsNullOrWhiteSpace(historyList))
-            {
-                //html.AppendLine(section.HistoryHeader);
-                html.Append(historyList);
-            }
 
             return html.ToString();
         }
@@ -191,6 +202,7 @@ namespace RIPharmStatutesAggregator.Services
             }
 
             var html = new StringBuilder();
+            html.AppendLine();
             html.AppendLine(Tags.MakeDiv("section-history"));
             html.AppendLine(Tags.H4.Start);
             html.AppendLine("History of Section");
