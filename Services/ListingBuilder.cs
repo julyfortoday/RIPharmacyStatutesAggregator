@@ -62,7 +62,9 @@ namespace RIPharmStatutesAggregator.Services
 
             foreach (var chapter in chapters)
             {
-                var firstSectionPage = pages.FirstOrDefault(x => x.Elements.ChapterNumber == chapter.ChapterNumber);
+
+                var firstSectionPage = pages.FirstOrDefault(x =>
+                    (x.Elements.ChapterNumber == chapter.ChapterNumber) && !IsIndexPage(x));
 
                 Title title;
                 if (titles.Any(x => x.TitleNumber == firstSectionPage.Elements.TitleNumber))

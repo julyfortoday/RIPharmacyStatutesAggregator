@@ -1,46 +1,53 @@
 ﻿html {
     font-family: Calibri,Candara,Segoe,Segoe UI,Optima,Arial,sans-serif;
-    background-color: #e3f1ff;
+    background-color: #D1E8FF;
     Color: #424242;
+    margin:0px;
 }
-#title{
+#title {
+    text-align: center;
     font-size: 300%;
     Color: #92b8d5;
-    padding-left:70px;
-    margin-top: 10px;
-    margin-bottom: 10px;
 }
-#status{
-    font-size: 100%;
-    padding-left:70px;
+#status {
+    font-weight: bold;
+    text-align: center;
 }
-#page-index{
-    font-size: 150%;
+#page-index {
+    font-size: 110%;
     padding-top:10px;
     Color: slategray;
+    background-color: white;
 }
-#content{
+#index {
+    background-color: white;
+}
+#content {
     background-color: white;
     margin-left: 10px;
     margin-right: 10px;
 }
+div {
+    margin-top:0px;
+    margin-bottom:0px;
+}
 h1 {
-    text-decoration: underline;
     Color: #d09837;
     background-color: #496d89;
     padding-left:30px;
     padding-top:10px;
     padding-bottom:10px;
-    margin-top: 20px;
-    margin-bottom: 0px;
+    margin-top:0px;
+    margin-bottom:0px;
 }
-h2{
+h2 {
     Color: #424242;
     background-color: #92b8d5;
     padding-left:30px;
     padding-top:15px;
     padding-bottom:15px;
-    margin: 0px;
+    margin-top:0px;
+    margin-bottom:0px;
 }
 h3 {
     margin-left: 20px;

@@ -20,13 +20,11 @@ namespace RIPharmStatutesAggregator.Services
 
         internal string Format(StatuteListing listing)
         {
-            var pageIndex = CreatePageIndex();
-            var page = CreatePage(listing);
-            var html = AddTopLevelHTML(pageIndex, page);
+            var html = AddTopLevelHTML(listing);
             return html;
         }
 
-        private string AddTopLevelHTML(string index, string body)
+        private string AddTopLevelHTML(StatuteListing listing)
         {
             var pageTitle = "Rhode Island Pharmacy Statutes";
 
@@ -49,19 +47,30 @@ namespace RIPharmStatutesAggregator.Services
             html.AppendLine(Tags.Div.End);
             html.AppendLine(Tags.MakeDiv("content"));
             html.AppendLine(Tags.MakeDiv("page-index"));
-            html.AppendLine(Tags.MakeParagraph("Page Index"));
-            html.AppendLine(index);
+            html.AppendLine(CreatePageIndex(listing));
             html.AppendLine(Tags.Div.End);
-            html.AppendLine(body);
+            html.AppendLine(CreatePage(listing));
             html.AppendLine(Tags.Div.End);
             html.AppendLine(Tags.Body.End);
             html.AppendLine(Tags.html.End);
             return html.ToString();
         }
 
-        private static string CreatePageIndex()
+        private static string CreatePageIndex(StatuteListing listing)
         {
-            return "Page Index";
+            var html = new StringBuilder();
+
+            foreach (var title in listing.Titles)
+            {                
+                var titleLine = title.TitleNumber + " " + title.TitleName;
+                html.AppendLine(Tags.H4.Start);
+                html.AppendLine(Tags.AnchorLink(title.LinkID, titleLine));
+                html.AppendLine(Tags.H4.End);
+                var titleIndex = BuildTitleIndex(title);
+                html.AppendLine(titleIndex);
+            }
+
+            return html.ToString();
         }
 
         private static string CreatePage(StatuteListing listing)
@@ -83,10 +92,13 @@ namespace RIPharmStatutesAggregator.Services
 
             html.AppendLine();
             html.Append(Tags.H1.Start);
+            html.Append(Tags.Anchor(title.LinkID));
             html.Append(title.TitleNumber);
             html.Append(Tags.Break.Start);
             html.Append(title.TitleName);
             html.Append(Tags.H1.End);
+
+            html.Append(BuildTitleIndex(title));
 
             foreach (var chapter in title.Chapters)
             {
@@ -97,10 +109,29 @@ namespace RIPharmStatutesAggregator.Services
             return html.ToString();
         }
 
+        private static string BuildTitleIndex(Title title)
+        {
+            var html = new StringBuilder();
+            html.AppendLine();
+            html.AppendLine(Tags.MakeDiv("index"));
+            html.AppendLine(Tags.List.Start);
+            foreach (var chapter in title.Chapters)
+            {
+                html.AppendLine(Tags.ListItem.Start);
+                html.AppendLine(Tags.AnchorLink(chapter.LinkID, chapter.ChapterNumber + " " + chapter.ChapterName));
+                html.AppendLine(Tags.ListItem.End);
+            }
+            html.AppendLine(Tags.List.End);
+            html.AppendLine(Tags.Div.End);
+            return html.ToString();
+        }
 
         public static string FormatChaper(Chapter chapter)
         {
             var html = new StringBuilder();
+
+            html.AppendLine();
+            html.Append(Tags.Anchor(chapter.LinkID));
 
             html.AppendLine();
             html.Append(Tags.H2.Start);
@@ -109,7 +140,13 @@ namespace RIPharmStatutesAggregator.Services
             html.Append(chapter.ChapterName);
             html.Append(Tags.H2.End);
 
+            html.AppendLine();
+            html.AppendLine(Tags.MakeDiv("index"));
+            html.Append(Tags.H4.Start);
+            html.Append("Index of Sections");
+            html.AppendLine(Tags.H4.End);
             html.Append(BuildChapterIndex(chapter));
+            html.AppendLine(Tags.Div.End);
 
             foreach (var section in chapter.Sections)
             {
@@ -123,15 +160,11 @@ namespace RIPharmStatutesAggregator.Services
         private static string BuildChapterIndex(Chapter chapter)
         {
             var html = new StringBuilder();
-            html.AppendLine();
-            html.Append(Tags.H4.Start);
-            html.Append("Index of Sections");
-            html.AppendLine(Tags.H4.End);
             html.AppendLine(Tags.List.Start);
             foreach (var section in chapter.Sections)
             {
                 html.AppendLine(Tags.ListItem.Start);
-                html.AppendLine(Tags.AnchorLink(section.SafeName, section.SectionNumber + " " + section.SectionName));
+                html.AppendLine(Tags.AnchorLink(section.LinkID, section.SectionNumber + " " + section.SectionName));
                 html.AppendLine(Tags.ListItem.End);
             }
             html.AppendLine(Tags.List.End);
@@ -143,7 +176,7 @@ namespace RIPharmStatutesAggregator.Services
             var html = new StringBuilder();
 
             html.AppendLine();
-            html.Append(Tags.Anchor(section.SafeName));
+            html.Append(Tags.Anchor(section.LinkID));
 
             html.AppendLine();
             html.Append(Tags.H3.Start);
