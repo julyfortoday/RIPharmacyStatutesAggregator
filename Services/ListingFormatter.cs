@@ -159,11 +159,14 @@ namespace RIPharmStatutesAggregator.Services
             {
                 foreach (var article in chapter.Articles)
                 {
+                    html.Append(Tags.MakeDiv("article-header"));
                     html.Append(Tags.H3.Start);
                     html.Append(article.ArticleNumber);
                     html.Append(" ");
                     html.AppendLine(article.ArticleName);
                     html.Append(Tags.H3.End);
+                    html.Append(Tags.Div.End);
+
                     foreach (var section in article.Sections)
                     {
                         var sectionHtml = FormatSection(section);
