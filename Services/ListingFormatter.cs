@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using RIPharmStatutesAggregator.Core.StatuteElements;
+using RIPharmStatutesAggregator.Core;
 
 namespace RIPharmStatutesAggregator.Services
 {
@@ -30,28 +31,31 @@ namespace RIPharmStatutesAggregator.Services
             var pageTitle = "Rhode Island Pharmacy Statutes";
 
             var html = new StringBuilder();
-            html.AppendLine("<html>");
-            html.AppendLine("<head>");
-            html.AppendLine("<style>");
+            html.AppendLine(Tags.html.Start);
+            //header
+            html.AppendLine(Tags.head.Start);
+            html.AppendLine(Tags.style.Start);
             html.AppendLine(styleSheetProvider.GetStyleSheet());
-            html.AppendLine("</style>");
-            html.AppendLine("</head>");
-            html.AppendLine("<body>");
-            html.AppendLine("<div id=\"title\">");
+            html.AppendLine(Tags.style.End);
+            html.AppendLine(Tags.head.End);
+
+            //body
+            html.AppendLine(Tags.Body.Start);
+            html.AppendLine(Tags.MakeDiv("title"));
             html.AppendLine(pageTitle);
-            html.AppendLine("</div>");
-            html.AppendLine("<div id=\"status\">");
+            html.AppendLine(Tags.Div.End);
+            html.AppendLine(Tags.MakeDiv("status"));
             html.AppendLine("Last Updated: " + DateTime.Now);
-            html.AppendLine("</div>");
-            html.AppendLine("<div id=\"content\">");
-            html.AppendLine("<div id=\"page-index\">");
-            html.AppendLine("<p>Page Index</p>");
+            html.AppendLine(Tags.Div.End);
+            html.AppendLine(Tags.MakeDiv("content"));
+            html.AppendLine(Tags.MakeDiv("page-index"));
+            html.AppendLine(Tags.MakeParagraph("Page Index"));
             html.AppendLine(index);
-            html.AppendLine("</div>");
+            html.AppendLine(Tags.Div.End);
             html.AppendLine(body);
-            html.AppendLine("</div>");
-            html.AppendLine("</body>");
-            html.AppendLine("</html>");
+            html.AppendLine(Tags.Div.End);
+            html.AppendLine(Tags.Body.End);
+            html.AppendLine(Tags.html.End);
             return html.ToString();
         }
 
@@ -78,11 +82,11 @@ namespace RIPharmStatutesAggregator.Services
             var html = new StringBuilder();
 
             html.AppendLine();
-            html.Append("<h1>");
+            html.Append(Tags.H1.Start);
             html.Append(title.TitleNumber);
-            html.Append("<br>");
+            html.Append(Tags.Break.Start);
             html.Append(title.TitleName);
-            html.Append("</h1>");
+            html.Append(Tags.H1.End);
 
             foreach (var chapter in title.Chapters)
             {
@@ -99,11 +103,11 @@ namespace RIPharmStatutesAggregator.Services
             var html = new StringBuilder();
 
             html.AppendLine();
-            html.Append("<h2>");
+            html.Append(Tags.H2.Start);
             html.Append(chapter.ChapterNumber);
-            html.Append("<br>");
+            html.Append(Tags.Break.Start);
             html.Append(chapter.ChapterName);
-            html.Append("</h2>");
+            html.Append(Tags.H2.End);
 
             foreach (var section in chapter.Sections)
             {
@@ -122,36 +126,35 @@ namespace RIPharmStatutesAggregator.Services
             var html = new StringBuilder();
 
             html.AppendLine();
-            html.Append("<a name=\"#");
-            html.Append(section.SafeName);
-            html.Append("\"></a>");
+            html.Append(Tags.AnchorLink(section.SafeName));
 
             html.AppendLine();
-            html.Append("<h3>");
+            html.Append(Tags.H3.Start);
             html.Append("&sect; ");
             html.Append(section.SectionNumber);
             html.Append(" ");
             html.Append(section.SectionName);
-            html.Append("</h3>");
+            html.Append(Tags.H3.End);
 
             html.AppendLine();
-            html.AppendLine("<div id=\"section-body\">");
+            html.AppendLine(Tags.MakeDiv("section-body"));
             foreach (var line in section.Lines)
             {
-                html.Append("<p>");
+                html.Append(Tags.Paragraph.Start);
                 if(!string.IsNullOrWhiteSpace(line.Identifier))
                 {
-                    html.Append("<b>");
+                    html.Append(Tags.Bold.Start);
                     html.Append("(");
                     html.Append(line.Identifier);
                     html.Append(")");
-                    html.Append("</b> ");
+                    html.Append(Tags.Bold.End);
+                    html.Append(" ");
                 }
                 html.Append(line.Contents);
-                html.Append("</p>");
+                html.Append(Tags.Paragraph.End);
                 html.AppendLine();
             }
-            html.AppendLine("</div>");
+            html.AppendLine(Tags.Div.End);
             html.AppendLine();
 
             var historyList = FormatHistoryList(section.HistoryList);
@@ -174,24 +177,26 @@ namespace RIPharmStatutesAggregator.Services
 
             if (historyEntries.Count() > 0)
             {
-                historyList.AppendLine("<ul>");
+                historyList.AppendLine(Tags.List.Start);
                 foreach (var entry in historyEntries)
                 {
                     var entryMod = entry;
                     if (entry.EndsWith(".")) // remove unneeded period at end of list
                         entryMod = entry.Substring(0,entry.Length-1);
-                    historyList.AppendLine("<li>");
+                    historyList.AppendLine(Tags.ListItem.Start);
                     historyList.AppendLine(entryMod.Replace("[SECT_SYMBOL]", "&sect;"));
-                    historyList.AppendLine("</li>");
+                    historyList.AppendLine(Tags.ListItem.End);
                 }
-                historyList.Append("</ul>");
+                historyList.Append(Tags.List.End);
             }
 
             var html = new StringBuilder();
-            html.AppendLine("<div id=\"section-history\">");
-            html.AppendLine("<h4>History of Section</h4>");
+            html.AppendLine(Tags.MakeDiv("section-history"));
+            html.AppendLine(Tags.H4.Start);
+            html.AppendLine("History of Section");
+            html.AppendLine(Tags.H4.End);
             html.AppendLine(historyList.ToString());
-            html.Append("</div>");
+            html.Append(Tags.Div.End);
             return html.ToString();
         }
     }

@@ -6,25 +6,13 @@ using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using System.Xml.Linq;
+using static RIPharmStatutesAggregator.Core.Tags;
 
 namespace RIPharmStatutesAggregator.Services
 {
     public static class PageElementExtractor
     {
         const int tolerance = 10; // acceptable distance between tags on different lines or separating whitespace
-
-        // tags
-        static Tag BodyTag = new Tag("BODY");
-        static Tag BoldTag = new Tag("B");
-        static Tag ParagraphTag = new Tag("P");
-        static Tag ItalicTag = new Tag("I");
-        static Tag BreakTag = new Tag("BR");
-        static Tag H1Tag = new Tag("H1");
-        static Tag H2Tag = new Tag("H2");
-        static Tag H3Tag = new Tag("H3");
-        static Tag ListTag = new Tag("UL");
-        static Tag HistoryTag = new Tag("HISTORY");
-        static Tag CenterTag = new Tag("CENTER");
 
         static string WILDCARD = ".*";
         static string NEWLINE = "\r\n";
@@ -38,8 +26,8 @@ namespace RIPharmStatutesAggregator.Services
 
             if (!isIndex)
             {
-                ExtractTitleHeader(html, H1Tag, elements);
-                ExtractChapterHeader(html, H2Tag, elements);
+                ExtractTitleHeader(html, Tags.H1, elements);
+                ExtractChapterHeader(html, Tags.H2, elements);
                 ExtractArticleHeader(html, elements);
                 ExtractHistoryFooter(html, elements);
                 var contentStartIndex = ExtractSectionTitle(html, elements);
@@ -48,7 +36,7 @@ namespace RIPharmStatutesAggregator.Services
             }
             else
             {
-                ExtractChapterHeader(html, H1Tag, elements);
+                ExtractChapterHeader(html, Tags.H1, elements);
             }
 
             return elements;
@@ -76,7 +64,7 @@ namespace RIPharmStatutesAggregator.Services
             var titleMatch = Regex.Match(html, titlePattern, RegexOptions.IgnoreCase | RegexOptions.Singleline);
             var titleCleaned = titleMatch.Value.Replace(tag.Start, string.Empty).Replace(tag.End, string.Empty).Replace(NEWLINE, string.Empty);
 
-            var separator = new string[] { BreakTag.Start };
+            var separator = new string[] { Tags.Break.Start };
             var parts = titleCleaned.Split(separator, StringSplitOptions.RemoveEmptyEntries);
             if (parts.Length > 1)
             {
@@ -91,7 +79,7 @@ namespace RIPharmStatutesAggregator.Services
             var chapterMatch = Regex.Match(html, chapterPattern, RegexOptions.IgnoreCase | RegexOptions.Singleline);
             var chapterCleaned = chapterMatch.Value.Replace(tag.Start, string.Empty).Replace(tag.End, string.Empty).Replace(NEWLINE, string.Empty);
 
-            var separator = new string[] { BreakTag.Start };
+            var separator = new string[] { Tags.Break.Start };
             var parts = chapterCleaned.Split(separator, StringSplitOptions.RemoveEmptyEntries);
             if (parts.Length > 1)
             {
@@ -108,24 +96,24 @@ namespace RIPharmStatutesAggregator.Services
 
         private static void ExtractArticleHeader(string html, PageElements elements)
         {
-            if (html.Contains(ItalicTag.Start))
+            if (html.Contains(Tags.Italic.Start))
             {
                 // The first <I> contained within a an h2 header signifies an article heading
                 // but sometimes the section body contains <I> tags and they can cause false positives without some kind of limit
                 var anyCharsWithinLimit = GetAnyCharsWithinLimit(tolerance);
 
-                var articleStartPattern = H2Tag.Start + anyCharsWithinLimit + ItalicTag.Start;
+                var articleStartPattern = Tags.H2.Start + anyCharsWithinLimit + Tags.Italic.Start;
                 var articleStartMatch = Regex.Match(html, articleStartPattern, RegexOptions.IgnoreCase | RegexOptions.Singleline);
                 var articleStartIndex = articleStartMatch.Index + articleStartMatch.Length;
 
-                var articleEndPattern = ItalicTag.End + anyCharsWithinLimit + H2Tag.End;
+                var articleEndPattern = Tags.Italic.End + anyCharsWithinLimit + Tags.H2.End;
                 var articleEndMatch = Regex.Match(html, articleEndPattern, RegexOptions.IgnoreCase | RegexOptions.Singleline);
                 var articleEndIndex = articleEndMatch.Index - articleStartIndex;
 
                 var articleContents = html.Substring(articleStartIndex, articleEndIndex);
-                var articleCleaned = articleContents.Replace(ItalicTag.Start, string.Empty).Replace(ItalicTag.End, string.Empty).Replace(NEWLINE, string.Empty);
+                var articleCleaned = articleContents.Replace(Tags.Italic.Start, string.Empty).Replace(Tags.Italic.End, string.Empty).Replace(NEWLINE, string.Empty);
 
-                var separator = new string[] { BreakTag.Start };
+                var separator = new string[] { Tags.Break.Start };
                 var parts = articleCleaned.Split(separator, StringSplitOptions.RemoveEmptyEntries);
                 if (parts.Length > 1)
                 {
@@ -137,14 +125,14 @@ namespace RIPharmStatutesAggregator.Services
 
         private static void ExtractHistoryFooter(string html, PageElements elements)
         {
-            if (html.Contains(HistoryTag.Start))
+            if (html.Contains(Tags.HistoryTag.Start))
             {
-                var historyPattern = HistoryTag.Start + WILDCARD + HistoryTag.End;
+                var historyPattern = Tags.HistoryTag.Start + WILDCARD + Tags.HistoryTag.End;
                 var historyMatch = Regex.Match(html, historyPattern, RegexOptions.IgnoreCase | RegexOptions.Singleline);
-                var historyCleaned = historyMatch.Value.Replace(HistoryTag.Start, string.Empty)
-                    .Replace(HistoryTag.End, string.Empty).Replace(NEWLINE, string.Empty);
+                var historyCleaned = historyMatch.Value.Replace(Tags.HistoryTag.Start, string.Empty)
+                    .Replace(Tags.HistoryTag.End, string.Empty).Replace(NEWLINE, string.Empty);
 
-                var separator = new string[] { BreakTag.Start };
+                var separator = new string[] { Tags.Break.Start };
                 var parts = historyCleaned.Split(separator, StringSplitOptions.RemoveEmptyEntries);
                 if (parts.Length > 1)
                 {
@@ -159,12 +147,12 @@ namespace RIPharmStatutesAggregator.Services
         {
             var anyCharsWithinLimit = GetAnyCharsWithinLimit(tolerance);
 
-            var startPattern = CenterTag.End + anyCharsWithinLimit + BreakTag.Start + anyCharsWithinLimit +
-                ParagraphTag.Start + anyCharsWithinLimit + BoldTag.Start;
+            var startPattern = Tags.CenterTag.End + anyCharsWithinLimit + Tags.Break.Start + anyCharsWithinLimit +
+                Tags.Paragraph.Start + anyCharsWithinLimit + Tags.Bold.Start;
             var startMatch = Regex.Match(html, startPattern, RegexOptions.IgnoreCase | RegexOptions.Singleline);
             var startIndex = (startMatch.Index + startMatch.Length);
 
-            var endPattern = BoldTag.End + anyCharsWithinLimit + BreakTag.Start + anyCharsWithinLimit + BreakTag.Start;
+            var endPattern = Tags.Bold.End + anyCharsWithinLimit + Tags.Break.Start + anyCharsWithinLimit + Tags.Break.Start;
             var endMatch = Regex.Match(html, endPattern, RegexOptions.IgnoreCase | RegexOptions.Singleline);
             var endIndex = endMatch.Index;
 
@@ -185,25 +173,25 @@ namespace RIPharmStatutesAggregator.Services
 
         private static void ExtractSectionContents(string html, PageElements elements, int bodyStartIndex = 0)
         {
-            if (html.Contains(ListTag.Start))
+            if (html.Contains(Tags.List.Start))
             {
                 return;
             }
 
             var bodyEndIndex = 0;
-            if (html.Contains(HistoryTag.Start))
-                bodyEndIndex = html.IndexOf(HistoryTag.Start);
-            else if (html.Contains(BodyTag.End))
-                bodyEndIndex = html.IndexOf(BodyTag.End);
+            if (html.Contains(Tags.HistoryTag.Start))
+                bodyEndIndex = html.IndexOf(Tags.HistoryTag.Start);
+            else if (html.Contains(Tags.Body.End))
+                bodyEndIndex = html.IndexOf(Tags.Body.End);
             else
                 bodyEndIndex = html.Length;
 
             var contents = html.Substring(bodyStartIndex, bodyEndIndex - bodyStartIndex);
-            var cleaned = contents.Replace(BreakTag.Start, string.Empty);
+            var cleaned = contents.Replace(Tags.Break.Start, string.Empty);
             var lines = cleaned.Split(new string[] { NEWLINE }, StringSplitOptions.RemoveEmptyEntries);
             for(int i = 0; i < lines.Count(); i++)
             {
-                lines[i] = lines[i].Replace(ParagraphTag.Start, string.Empty).Trim();
+                lines[i] = lines[i].Replace(Tags.Paragraph.Start, string.Empty).Trim();
             }
 
             var splitLines = new List<Tuple<string, string>>();
