@@ -51,9 +51,17 @@ namespace RIPharmStatutesAggregator.Core
             return "<DIV id=\"" + id + "\">";
         }
 
-        public static string AnchorLink(string name = "")
+        //<a href="#Section1.2">Section 1.2</a>
+        //<a name="Section1.2"></a> 
+
+        public static string AnchorLink(string name, string text)
         {
-            return "<A name=\"#" + name + "\"></A>";
+            return "<A href=\"#" + name + "\">" + text + "</A>";
+        }
+
+        public static string Anchor(string name = "")
+        {
+            return "<A name=\"" + name + "\"></A>";
         }
     }
 }

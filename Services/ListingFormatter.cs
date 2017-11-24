@@ -109,6 +109,8 @@ namespace RIPharmStatutesAggregator.Services
             html.Append(chapter.ChapterName);
             html.Append(Tags.H2.End);
 
+            html.Append(BuildChapterIndex(chapter));
+
             foreach (var section in chapter.Sections)
             {
                 var sectionHtml = FormatSection(section);
@@ -118,15 +120,30 @@ namespace RIPharmStatutesAggregator.Services
             return html.ToString();
         }
 
-        //<a href="#Section1.2">Section 1.2</a>
-        //<a name="Section1.2"></a> 
+        private static string BuildChapterIndex(Chapter chapter)
+        {
+            var html = new StringBuilder();
+            html.AppendLine();
+            html.Append(Tags.H4.Start);
+            html.Append("Index of Sections");
+            html.AppendLine(Tags.H4.End);
+            html.AppendLine(Tags.List.Start);
+            foreach (var section in chapter.Sections)
+            {
+                html.AppendLine(Tags.ListItem.Start);
+                html.AppendLine(Tags.AnchorLink(section.SafeName, section.SectionNumber + " " + section.SectionName));
+                html.AppendLine(Tags.ListItem.End);
+            }
+            html.AppendLine(Tags.List.End);
+            return html.ToString();
+        }
 
         public static string FormatSection(Section section)
         {
             var html = new StringBuilder();
 
             html.AppendLine();
-            html.Append(Tags.AnchorLink(section.SafeName));
+            html.Append(Tags.Anchor(section.SafeName));
 
             html.AppendLine();
             html.Append(Tags.H3.Start);
