@@ -157,14 +157,16 @@ namespace RIPharmStatutesAggregator.Services
             var endIndex = endMatch.Index;
 
             var secTitle = html.Substring(startIndex, endIndex - startIndex);
-            var cleaned = secTitle.Replace(NEWLINE, string.Empty).Replace(SECTION_SYMBOL, string.Empty).Trim();
+            var enDash = "&#150;";
+            var cleaned = secTitle.Replace(NEWLINE, string.Empty).Replace(SECTION_SYMBOL, string.Empty).Replace(enDash,"-").Trim();
+            if (cleaned.EndsWith("."))
+                cleaned = cleaned.Substring(0,cleaned.Length-1);
 
-            var separator = new string[] { " " };
-            var parts = cleaned.Split(separator, StringSplitOptions.RemoveEmptyEntries);
-            if (parts.Length > 1)
+            var splitIndex = cleaned.IndexOf(" ");
+            if (splitIndex >= 0)
             {
-                elements.SectionNumber = (parts[0] ?? string.Empty).Trim();
-                elements.SectionName = (parts[1] ?? string.Empty).Trim();
+                elements.SectionNumber = cleaned.Substring(0,splitIndex).Trim();
+                elements.SectionName = cleaned.Substring(splitIndex,cleaned.Length - splitIndex).Trim();
             }
 
             int contentStartIndex = endMatch.Index + endMatch.Length;
