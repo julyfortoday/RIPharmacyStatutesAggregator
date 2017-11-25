@@ -89,13 +89,14 @@ namespace RIPharmStatutesAggregator
         private void PrintLastDownloaded()
         {
             var label = "Last Downloaded: ";
-            var output = Properties.Settings.Default.LastDownloaded.ToString();
-            var result = DateTime.Compare(Properties.Settings.Default.LastDownloaded, new DateTime(2000, 1, 1));
-            bool never = result <= 0;
-
-            if(never)
+            var output = "Never";
+            var lastDownloaded = Properties.Settings.Default.LastDownloaded;
+            if (lastDownloaded != null)
             {
-                output = "Never";
+                var result = DateTime.Compare(lastDownloaded, new DateTime(2000, 1, 1));
+                var never = result <= 0;
+                if(!never)
+                    output = lastDownloaded.ToString();
             }
             OutputLabel_LastDownloaded.Text = label + output;
         }

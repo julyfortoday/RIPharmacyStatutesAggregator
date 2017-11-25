@@ -43,7 +43,7 @@ namespace RIPharmStatutesAggregator.Properties {
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("")]
+        [global::System.Configuration.DefaultSettingValueAttribute("C:\\")]
         public string SaveLocation {
             get {
                 return ((string)(this["SaveLocation"]));
@@ -55,6 +55,7 @@ namespace RIPharmStatutesAggregator.Properties {
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("2017-11-01")]
         public global::System.DateTime LastDownloaded {
             get {
                 return ((global::System.DateTime)(this["LastDownloaded"]));
