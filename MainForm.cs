@@ -26,7 +26,10 @@ namespace RIPharmStatutesAggregator
 
         private void MainForm_Load(object sender, EventArgs e)
         {
-            var styleSheet = File.ReadAllText("style.css") ?? "";
+            var styleSheet = "";
+            if (File.Exists("style.css"))
+                styleSheet = File.ReadAllText("style.css");
+
             styleSheetProvider = new StyleSheetProvider(styleSheet);
 
             var addresses = Properties.Settings.Default.Addresses;
