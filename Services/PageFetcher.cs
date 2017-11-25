@@ -22,6 +22,11 @@ namespace RIPharmStatutesAggregator.Services
                 Directory.CreateDirectory(dataPath);
         }
 
+        public void AddPageUrls(List<string> pageUrls)
+        {
+            this.pageUrls = pageUrls;
+        }
+
         public List<Page> GetPages()
         {
             var pages = new List<Page>();

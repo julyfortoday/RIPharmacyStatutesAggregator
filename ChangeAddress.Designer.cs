@@ -28,18 +28,18 @@
         /// </summary>
         private void InitializeComponent()
         {
-            this.textBox1 = new System.Windows.Forms.TextBox();
+            this.addressInput = new System.Windows.Forms.TextBox();
             this.saveAddress = new System.Windows.Forms.Button();
             this.SuspendLayout();
             // 
-            // textBox1
+            // addressInput
             // 
-            this.textBox1.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            this.addressInput.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-            this.textBox1.Location = new System.Drawing.Point(13, 13);
-            this.textBox1.Name = "textBox1";
-            this.textBox1.Size = new System.Drawing.Size(598, 20);
-            this.textBox1.TabIndex = 0;
+            this.addressInput.Location = new System.Drawing.Point(13, 13);
+            this.addressInput.Name = "addressInput";
+            this.addressInput.Size = new System.Drawing.Size(598, 20);
+            this.addressInput.TabIndex = 0;
             // 
             // saveAddress
             // 
@@ -57,7 +57,7 @@
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(702, 44);
             this.Controls.Add(this.saveAddress);
-            this.Controls.Add(this.textBox1);
+            this.Controls.Add(this.addressInput);
             this.Name = "ChangeAddress";
             this.Text = "Save Address";
             this.ResumeLayout(false);
@@ -67,7 +67,7 @@
 
         #endregion
 
-        private System.Windows.Forms.TextBox textBox1;
+        private System.Windows.Forms.TextBox addressInput;
         private System.Windows.Forms.Button saveAddress;
     }
 }

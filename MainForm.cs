@@ -14,10 +14,10 @@ namespace RIPharmStatutesAggregator
 {
     public partial class MainForm : Form
     {
-        List<string> pageUrls;
         List<Core.Page> pages;
         PageFetcher fetcher;
         StyleSheetProvider styleSheetProvider;
+        string AppPath = Path.GetDirectoryName(System.Reflection.Assembly.GetExecutingAssembly().Location);
 
         public MainForm()
         {
@@ -30,12 +30,10 @@ namespace RIPharmStatutesAggregator
             styleSheetProvider = new StyleSheetProvider(styleSheet);
 
             var addresses = Properties.Settings.Default.Addresses;
-            pageUrls = addresses.Cast<string>().ToList();
-            PrintAddressesToListBox();
+            List<string> urls = addresses.Cast<string>().ToList();
+            PrintAddressesToListBox(urls);
 
-
-            fetcher = new PageFetcher(pageUrls,
-                System.IO.Path.GetDirectoryName(System.Reflection.Assembly.GetExecutingAssembly().Location));
+            fetcher = new PageFetcher(GetAddressesFromListBox(), AppPath);
             fetcher.OverwriteSavedPages = true;
 
             PrintLastDownloaded();
@@ -46,9 +44,26 @@ namespace RIPharmStatutesAggregator
             }
 
             // DEBUG
-            saveButton.Enabled = true;
-            fetcher.OverwriteSavedPages = false;
-            pages = fetcher.GetPages();
+            //saveButton.Enabled = true;
+            //fetcher.OverwriteSavedPages = false;
+            //pages = fetcher.GetPages();
+        }
+
+        private void MainForm_FormClosed(object sender, FormClosedEventArgs e)
+        {
+            SaveAppSettings();
+        }
+
+        private void SaveAppSettings()
+        {
+            var sCol = new System.Collections.Specialized.StringCollection();
+            var addresses = GetAddressesFromListBox();
+            foreach (var address in addresses)
+            {
+                sCol.Add(address);
+            }
+            Properties.Settings.Default.Addresses = sCol;
+            Properties.Settings.Default.Save();
         }
 
         private void downloadButton_Click(object sender, EventArgs e)
@@ -57,6 +72,7 @@ namespace RIPharmStatutesAggregator
             downloadButton.Text = "Downloading... (this may take a moment)";
             saveButton.Enabled = false;
 
+            fetcher.AddPageUrls(GetAddressesFromListBox());
             pages = fetcher.GetPages();
 
             Properties.Settings.Default.LastDownloaded = DateTime.Now;
@@ -78,6 +94,24 @@ namespace RIPharmStatutesAggregator
                 output = "Never";
             }
             OutputLabel_LastDownloaded.Text = label + output;
+        }
+
+        private void PrintAddressesToListBox(List<string> addresses)
+        {
+            foreach (var address in addresses)
+            {
+                addressListBox.Items.Add(address);
+            }
+        }
+
+        private List<string> GetAddressesFromListBox()
+        {
+            List<string> addresses = new List<string>();
+            foreach (var item in addressListBox.Items)
+            {
+                addresses.Add(item.ToString());
+            }
+            return addresses;
         }
 
         private void saveButton_Click(object sender, EventArgs e)
@@ -104,17 +138,42 @@ namespace RIPharmStatutesAggregator
             }
         }
 
-        private void listBox1_SelectedIndexChanged(object sender, EventArgs e)
+        private void addButton_Click(object sender, EventArgs e)
         {
-
+            using (var form = new ChangeAddress(""))
+            {
+                var result = form.ShowDialog();
+                if (result == DialogResult.OK)
+                {
+                    string newAddress = form.Address;
+                    addressListBox.Items.Add(newAddress);
+                }
+            }
         }
 
-        private void PrintAddressesToListBox()
+        private void removeButton_Click(object sender, EventArgs e)
         {
-            foreach(var address in pageUrls)
+            var selected = addressListBox.SelectedIndex;
+            addressListBox.Items.RemoveAt(selected);
+        }
+
+        private void editButton_Click(object sender, EventArgs e)
+        {
+            var selected = addressListBox.SelectedIndex;
+            if (selected < 0)
+                return;
+            var address = addressListBox.Items[selected].ToString();
+
+            using (var form = new ChangeAddress(address))
             {
-                listBox1.Items.Add(address);
+                var result = form.ShowDialog();
+                if (result == DialogResult.OK)
+                {
+                    string newAddress = form.Address;
+                    addressListBox.Items[selected] = newAddress;
+                }
             }
+
         }
     }
 }
