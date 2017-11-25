@@ -35,6 +35,7 @@ namespace RIPharmStatutesAggregator
 
             fetcher = new PageFetcher(GetAddressesFromListBox(), AppPath);
             fetcher.OverwriteSavedPages = true;
+            fetcher.ClearOldFiles = true;
 
             PrintLastDownloaded();
 

@@ -10,6 +10,7 @@ namespace RIPharmStatutesAggregator.Services
     public class PageFetcher
     {
         public bool OverwriteSavedPages {get; set;}
+        public bool ClearOldFiles { get; set; }
 
         List<string> pageUrls;
         string dataPath;
@@ -31,6 +32,15 @@ namespace RIPharmStatutesAggregator.Services
         {
             var pages = new List<Page>();
             AddPagesFromUrlList(pageUrls, pages);
+
+            if (ClearOldFiles)
+            {
+                var files = Directory.EnumerateFiles(dataPath);
+                foreach (var file in files)
+                {
+                    File.Delete(file);
+                }
+            }
 
             GetDataForPages(pages);
             ParseAllPagesForLinks(pages);
