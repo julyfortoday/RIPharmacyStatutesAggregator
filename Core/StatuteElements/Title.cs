@@ -14,6 +14,10 @@ namespace RIPharmStatutesAggregator.Core.StatuteElements
         {
             get
             {
+                if (TitleNumber == null)
+                    TitleNumber = "";
+                if (TitleName == null)
+                    TitleName = "";
                 var cleaned = TitleNumber + "_" + TitleName.Trim().Replace(" ", "_").Replace("__", "_");
                 if (cleaned.Length > 41)
                     return cleaned.Substring(0, 40);

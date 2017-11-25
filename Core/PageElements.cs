@@ -24,5 +24,10 @@ namespace RIPharmStatutesAggregator.Core
 
         public string HistoryHeader { get; set; }
         public string HistoryList { get; set; }
+
+        public PageElements()
+        {
+            SectionContents = new List<Tuple<string, string>>();
+        }
     }
 }
