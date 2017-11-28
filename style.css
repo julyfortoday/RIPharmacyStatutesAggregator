@@ -124,8 +124,8 @@ ul {
 }
 
 @media print {
-    #title-header {page-break-before: always;}
-    #chapter-header {page-break-before: always;page-break-after: always;}
-    #article-header {page-break-before: always;}
-    #section-history {page-break-after:avoid;}
+    .title-header {page-break-before: always;}
+    .chapter-header {page-break-before: always;page-break-after: always;}
+    .article-header {page-break-before: always;}
+    .section-footer {page-break-after:avoid;}
 }
