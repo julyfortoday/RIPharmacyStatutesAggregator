@@ -24,6 +24,7 @@ namespace RIPharmStatutesAggregator.Core.StatuteElements
                 return cleaned;
             }
         }
+        public string OriginalLink { get; set; }
         public List<Line> Lines { get; set; }
 
         public string HistoryHeader { get; set; }

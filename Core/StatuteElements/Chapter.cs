@@ -24,6 +24,7 @@ namespace RIPharmStatutesAggregator.Core.StatuteElements
                 return cleaned;
             }
         }
+        public string OriginalLink { get; set; }
         public List<Article> Articles { get; set; }
         public List<Section> Sections { get; set; }
 

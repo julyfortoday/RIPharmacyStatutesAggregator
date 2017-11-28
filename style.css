@@ -27,18 +27,7 @@
     margin-left: 10px;
     margin-right: 10px;
 }
-#index {
-}
-#article {
-    font-weight: bold;
-    font-size: 100%;
-    margin-left: 30px;
-    margin-top: 10px;
-    text-decoration: underline;
-}
-#article-header {
-}
-#title-header {
+.title-header {
     Color: #d09837;
     background-color: #496d89;
     padding-top:10px;
@@ -48,9 +37,9 @@
     font-size: 120%;
     margin-bottom:-30px;
 }
-#title-header a:link{ color:#af9a74; } 
-#title-header a:visited{ color:#af9a74; } 
-#chapter-header {
+.title-header a:link{ color:#af9a74; } 
+.title-header a:visited{ color:#af9a74; } 
+.chapter-header {
     Color: #424242;
     background-color: #92b8d5;
     padding-top:15px;
@@ -58,11 +47,37 @@
     margin-top:30px;
     margin-bottom:30px;
 }
-#section-body {
+.chapter-title {
+    float:left;
 }
-#section-history {
+.chapter-index{
+    clear:both;
+}
+.index-article-heading {
+    font-weight: bold;
+    font-size: 100%;
+    margin-left: 30px;
+    margin-top: 10px;
+    text-decoration: underline;
+}
+.article-header {
+}
+.section-header {
+}
+.section-title {
+    float:left;
+}
+.section-body {
+    clear:both;
+}
+.section-footer {
     margin-bottom:20px;
 }
+.original-link {
+    padding:10px;
+    float:left;
+}
+
 div {
     margin-top:0px;
     margin-bottom:0px;

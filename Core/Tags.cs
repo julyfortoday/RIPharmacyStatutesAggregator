@@ -47,9 +47,18 @@ namespace RIPharmStatutesAggregator.Core
             return Paragraph.Start + contents + Paragraph.End;
         }
 
-        public static string MakeDiv(string id = "")
+
+        public static string OpenDivWithId(string id = "")
         {
             return "<DIV id=\"" + id + "\">";
+        }
+        public static string OpenDivWithClass(string cssClass = "")
+        {
+            return "<DIV class=\"" + cssClass + "\">";
+        }
+        public static string MakeDiv(string text = "", string id = "")
+        {
+            return "<DIV id=\"" + id + "\">" + text + "</DIV>";
         }
 
         //<a href="#Section1.2">Section 1.2</a>
@@ -63,6 +72,11 @@ namespace RIPharmStatutesAggregator.Core
         public static string Anchor(string name = "")
         {
             return "<A name=\"" + name + "\"></A>";
+        }
+
+        public static string MakeLink(string href, string text, string cssClass)
+        {
+            return "<A class=\"" + cssClass + "\" href=\"" + href + "\">" + text + "</A>";
         }
     }
 }
