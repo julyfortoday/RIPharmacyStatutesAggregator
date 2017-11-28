@@ -10,7 +10,7 @@ namespace RIPharmStatutesAggregator.Services
 {
     public class ListingFormatter
     {
-        static string NEWLINE = "\r\n";
+        //static string NEWLINE = "\r\n";
         private StyleSheetProvider styleSheetProvider;
 
         public ListingFormatter(StyleSheetProvider styleSheetProvider)

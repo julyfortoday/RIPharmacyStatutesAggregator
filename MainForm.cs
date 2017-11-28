@@ -47,9 +47,8 @@ namespace RIPharmStatutesAggregator
                 saveButton.Enabled = false;
             }
 
-            // DEBUG
-            var debug = true;
-            if(debug)
+            var args = Environment.GetCommandLineArgs().ToList();            
+            if(args.Contains("-debug"))
             {
                 fetcher.ClearOldFiles = false;
                 fetcher.OverwriteSavedPages = false;
