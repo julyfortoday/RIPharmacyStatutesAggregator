@@ -48,9 +48,14 @@ namespace RIPharmStatutesAggregator
             }
 
             // DEBUG
-            //saveButton.Enabled = true;
-            //fetcher.OverwriteSavedPages = false;
-            //pages = fetcher.GetPages();
+            var debug = true;
+            if(debug)
+            {
+                fetcher.ClearOldFiles = false;
+                fetcher.OverwriteSavedPages = false;
+                saveButton.Enabled = true;
+                pages = fetcher.GetPages();
+            }
         }
 
         private void MainForm_FormClosed(object sender, FormClosedEventArgs e)

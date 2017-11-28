@@ -94,6 +94,7 @@ namespace RIPharmStatutesAggregator.Services
             var first = subPages.FirstOrDefault();
             chapter.ChapterNumber = first.Elements.ChapterNumber;
             chapter.ChapterName = first.Elements.ChapterName;
+            chapter.OriginalLink = indexPage.Address;
 
             foreach (var subPage in subPages)
             {
@@ -139,6 +140,7 @@ namespace RIPharmStatutesAggregator.Services
             var section = new Section();
             section.SectionName = page.Elements.SectionName;
             section.SectionNumber = page.Elements.SectionNumber;
+            section.OriginalLink = page.Address;
             section.Lines = BuildLines(page.Elements.SectionContents);
             section.HistoryHeader = page.Elements.HistoryHeader;
             section.HistoryList = page.Elements.HistoryList;
